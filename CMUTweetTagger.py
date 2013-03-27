@@ -35,6 +35,11 @@ def _call_runtagger(tweets, run_tagger_cmd=RUN_TAGGER_CMD):
     if not os.path.exists(run_tagger_cmd):
         raise ValueError("Cannot find \"%s\"" % (run_tagger_cmd))
     message = "\n".join(tweets)
+
+    # force UTF-8 encoding (from internal unicode type) to avoid .communicate encoding error as per:
+    # http://stackoverflow.com/questions/3040101/python-encoding-for-pipe-communicate
+    message = message.encode('utf-8')
+
     po = subprocess.Popen([run_tagger_cmd, '--output-format', 'conll'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     result = po.communicate(message)
     # expect a tuple of 2 items like:
