@@ -34,7 +34,11 @@ def _call_runtagger(tweets, run_tagger_cmd=RUN_TAGGER_CMD):
     """Call runTagger.sh using a named input file"""
     if not os.path.exists(run_tagger_cmd):
         raise ValueError("Cannot find \"%s\"" % (run_tagger_cmd))
-    message = "\n".join(tweets)
+
+    # remove carriage returns as they are tweet separators for the stdin
+    # interface
+    tweets_cleaned = [tw.replace('\n', ' ') for tw in tweets]
+    message = "\n".join(tweets_cleaned)
 
     # force UTF-8 encoding (from internal unicode type) to avoid .communicate encoding error as per:
     # http://stackoverflow.com/questions/3040101/python-encoding-for-pipe-communicate
