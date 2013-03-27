@@ -1,14 +1,19 @@
 ark-tweet-nlp-python
 ====================
 
-Simple Python wrapper around runTagger.sh of ark-tweet-nlp. It passes a list of tweets to runTagger.sh and parses the result into a list of lists of tuples, each tuple represents the (token, type, confidence).
+Simple Python wrapper around runTagger.sh of ark-tweet-nlp. It passes a list of tweets to runTagger.sh and parses the result into a list of lists of tuples, each tuple represents the (token, type, confidence). 
 
 Wraps up:
 
   * https://github.com/brendano/ark-tweet-nlp
   * http://www.ark.cs.cmu.edu/TweetNLP/
 
+Lives here:
+
+  * https://github.com/ianozsvald/ark-tweet-nlp-python
+
 Usage:
+-----
    
     >>> import CMUTweetTagger
     >>> print CMUTweetTagger.runtagger_parse(['example tweet 1', 'example tweet 2'])
