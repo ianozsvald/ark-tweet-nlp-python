@@ -5,8 +5,8 @@ Simple Python wrapper around runTagger.sh of ark-tweet-nlp. It passes a list of 
 
 Wraps up:
 
-    * https://github.com/brendano/ark-tweet-nlp
-    * http://www.ark.cs.cmu.edu/TweetNLP/
+  * https://github.com/brendano/ark-tweet-nlp
+  * http://www.ark.cs.cmu.edu/TweetNLP/
 
 Usage:
    
