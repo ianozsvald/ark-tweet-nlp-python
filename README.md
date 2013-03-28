@@ -33,6 +33,7 @@ Notes and possible improvements:
   * This wrapper calls runTagger.sh via command line, Java takes a few seconds to start - you should send in a list of tweets rather than doing them one at a time
   * _call_runtagger replaces new-lines in the tweet with a space (as new-lines signify tweet separators in runTagger.sh), this might not be appropriate if you need to maintain new-lines
   * It would probably be awfully nicer if somebody wrapped up a py4J interface so we didn't have to start java at the command line each time (or maybe I shouldn't use .communicate which closes the process and instead keep the process open?)
+  * _split_results could do with a unittest, probably the module should turn into a class so you only have to set runTagger.sh's path location once (and it should assert if it can't find the script on initialisation)
 
 License:
 -------
