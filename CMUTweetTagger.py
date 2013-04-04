@@ -7,14 +7,15 @@ results=runtagger_parse(['example tweet 1', 'example tweet 2'])
 results will contain a list of lists (one per tweet) of triples, each triple represents (term, type, confidence)
 """
 import subprocess
-import os
+import shlex
 
 # The only relavent source I've found is here:
 # http://m1ked.com/post/12304626776/pos-tagger-for-twitter-successfully-implemented-in
 # which is a very simple implementation, my implementation is a bit more
 # useful (but not much).
 
-RUN_TAGGER_CMD = "./runTagger.sh"
+# NOTE this command is directly lifted from runTagger.sh
+RUN_TAGGER_CMD = "java -XX:ParallelGCThreads=2 -Xmx500m -jar ark-tweet-nlp-0.3.2.jar"
 
 
 def _split_results(rows):
@@ -32,8 +33,6 @@ def _split_results(rows):
 
 def _call_runtagger(tweets, run_tagger_cmd=RUN_TAGGER_CMD):
     """Call runTagger.sh using a named input file"""
-    if not os.path.exists(run_tagger_cmd):
-        raise ValueError("Cannot find \"%s\"" % (run_tagger_cmd))
 
     # remove carriage returns as they are tweet separators for the stdin
     # interface
@@ -44,7 +43,13 @@ def _call_runtagger(tweets, run_tagger_cmd=RUN_TAGGER_CMD):
     # http://stackoverflow.com/questions/3040101/python-encoding-for-pipe-communicate
     message = message.encode('utf-8')
 
-    po = subprocess.Popen([run_tagger_cmd, '--output-format', 'conll'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # build a list of args
+    args = shlex.split(run_tagger_cmd)
+    args.append('--output-format')
+    args.append('conll')
+    po = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # old call - made a direct call to runTagger.sh (not Windows friendly)
+    #po = subprocess.Popen([run_tagger_cmd, '--output-format', 'conll'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     result = po.communicate(message)
     # expect a tuple of 2 items like:
     # ('hello\t!\t0.9858\nthere\tR\t0.4168\n\n',
@@ -67,21 +72,28 @@ def runtagger_parse(tweets, run_tagger_cmd=RUN_TAGGER_CMD):
 
 def check_script_is_present(run_tagger_cmd=RUN_TAGGER_CMD):
     """Simple test to make sure we can see the script"""
+    success = False
     try:
-        po = subprocess.Popen([run_tagger_cmd, '--help'], stdout=subprocess.PIPE)
+        args = shlex.split(run_tagger_cmd)
+        args.append("--help")
+        po = subprocess.Popen(args, stdout=subprocess.PIPE)
+        # old call - made a direct call to runTagger.sh (not Windows friendly)
+        #po = subprocess.Popen([run_tagger_cmd, '--help'], stdout=subprocess.PIPE)
         while not po.poll():
             lines = [l for l in po.stdout]
         # we expected the first line of --help to look like the following:
         assert "RunTagger [options]" in lines[0]
+        success = True
     except OSError as err:
         print "Caught an OSError, have you specified the correct path to runTagger.sh? We are using \"%s\". Exception: %r" % (run_tagger_cmd, repr(err))
+    return success
 
 
 if __name__ == "__main__":
     print "Checking that we can see \"%s\", this will crash if we can't" % (RUN_TAGGER_CMD)
-    check_script_is_present()
-
-    print "Success."
-    print "Now pass in two messages, get a list of tuples back:"
-    tweets = ['this is a message', 'and a second message']
-    print runtagger_parse(tweets)
+    success = check_script_is_present()
+    if success:
+        print "Success."
+        print "Now pass in two messages, get a list of tuples back:"
+        tweets = ['this is a message', 'and a second message']
+        print runtagger_parse(tweets)

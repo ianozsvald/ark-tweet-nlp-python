@@ -21,19 +21,21 @@ Usage:
 
 Note, if you receive:
 
-    >>> ValueError: Cannot find "./runTagger.sh"
+    >>> Error: Unable to access jarfile ark-tweet-nlp-0.3.2.jar
 
-Make sure you pass in the correct path to runTagger.sh, e.g. if this script is cloned into a subdirectory of ark-tweet-nlp then you may need to use:
+Make sure you pass in the correct path to the jar file, e.g. if this script is cloned into a subdirectory of ark-tweet-nlp then you may need to use:
 
-    >>> print CMUTweetTagger.runtagger_parse(['example tweet 1', 'example tweet 2'], run_tagger_cmd="../runTagger.sh")
+    >>> print CMUTweetTagger.runtagger_parse(['example tweet 1', 'example tweet 2'], run_tagger_cmd="java -XX:ParallelGCThreads=2 -Xmx500m -jar ../ark-tweet-nlp-0.3.2.jar")
 
 Notes and possible improvements:
 -------------------------------
 
-  * This wrapper calls runTagger.sh via command line, Java takes a few seconds to start - you should send in a list of tweets rather than doing them one at a time
+  * This wrapper calls runTagger.sh's contents via command line, Java takes a few seconds to start - you should send in a list of tweets rather than doing them one at a time
+  * Communicating once the shell process is opened rather than closing comms would be more sensible
   * _call_runtagger replaces new-lines in the tweet with a space (as new-lines signify tweet separators in runTagger.sh), this might not be appropriate if you need to maintain new-lines
   * It would probably be awfully nicer if somebody wrapped up a py4J interface so we didn't have to start java at the command line each time (or maybe I shouldn't use .communicate which closes the process and instead keep the process open?)
   * _split_results could do with a unittest, probably the module should turn into a class so you only have to set runTagger.sh's path location once (and it should assert if it can't find the script on initialisation)
+  * Really the script should be in a class so it can be initialised with runTagger.sh
 
 License:
 -------
