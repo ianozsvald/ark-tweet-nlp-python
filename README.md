@@ -1,5 +1,7 @@
-ark-tweet-nlp-python
-====================
+ark-tweet-nlp-python [no longer supported by Ian]
+=================================================
+
+**Note** this is _no longer supported_ by Ian Ozsvald, sorry, you're most welcome to fork this. If you are running a living fork then I'd be happy to point users at your repo.
 
 Simple Python wrapper around runTagger.sh of ark-tweet-nlp. It passes a list of tweets to runTagger.sh and parses the result into a list of lists of tuples, each tuple represents the (token, type, confidence). 
 
